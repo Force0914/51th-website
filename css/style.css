@@ -17,6 +17,11 @@ label{
     margin: 0;
 }
 
+p{
+    float:left;
+    margin: 0;
+}
+
 form{
     margin: 0;
 }
@@ -94,6 +99,27 @@ body.a{
 }
 
 .well-color-top{
+    background: rgba(0,0,0,0.1);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    height: 10px;
+    left: -1px;
+    position: absolute;
+    top: -1px;
+    width: calc(100% + 2px);
+}
+
+.well-color-top2{
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    height: 10px;
+    left: -1px;
+    position: absolute;
+    top: -1px;
+    width: calc(100% + 2px);
+}
+
+.well-color-top3{
     background: rgba(0,0,0,0.1);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -182,8 +208,8 @@ input.ios:after {
 }
 
 input.ios:checked {
-    box-shadow: inset 20px 0 0 0 rgba(255,69,48);
-    border-color: rgba(255,69,48);
+    box-shadow: inset 20px 0 0 0 rgb(255,69,48);
+    border-color: rgb(255,69,48);
     transition: 0.5s;
 }
 
@@ -195,4 +221,37 @@ input.ios:checked:after {
 
 .invitecode{
     width: 33% !important;
+}
+
+@media (max-width: 412px){
+    .well *{
+        font-size: 17px;
+    }
+
+    .well{
+        height: calc(100vh - 200px) !important;
+    }
+
+    .well:not(.active){
+        display: none;
+    }
+
+    .mnone{
+        display: none;
+    }
+
+    .next{
+        position: fixed;
+        bottom: 50px;
+    }
+
+    .progress{
+        height: 10px;
+    }
+}
+
+@media (min-width: 412px){
+    .pcnone{
+        display: none;
+    }
 }
