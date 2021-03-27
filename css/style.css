@@ -1,66 +1,66 @@
-*{
+* {
     margin: 0;
     user-select: none;
     outline: none !important;
 }
 
-body{
+body {
     background:#F5F5F7;
 }
 
-hr{
+hr {
     margin: 10px;
 }
 
-label{
+label {
     float:left;
     margin: 0;
 }
 
-p{
+p {
     float:left;
     margin: 0;
 }
 
-form{
+form {
     margin: 0;
 }
-.modal{
+.modal {
     width: 600px;
 }
 
-.row{
+.row {
     margin: 0;
 }
 
-.modal-body>label>input[type="text"],.modal-body>label>input[type="number"]{
+.modal-body > label > input[type="text"], .modal-body > label > input[type="number"] {
     margin: 0;
 }
 
-.well>label>input[type="text"]{
+.well > label > input[type="text"] {
     margin: 0;
 }
 
-input[type="text"],input[type="number"],input[type="password"]{
+input[type="text"], input[type="number"], input[type="password"] {
     height: 10px;
     width: 130px;
 }
 
-input[type="radio"],input[type="checkbox"]{
+input[type="radio"], input[type="checkbox"] {
     margin: 0;
     margin-left: 3px;
     margin-right: 3px;
 
 }
 
-body.a{
+body.a {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-.box{
+.box {
     border-radius: 9%;
     text-align: center;
     border: 1px solid rgb(0, 0, 0,0.7);
@@ -69,15 +69,15 @@ body.a{
     background: rgba(0,0,0,0.05);
 }
 
-.txt-center{
+.txt-center {
     text-align: center;
 }
 
-.table{
+.table {
     background: rgba(0,0,0,0.01);
 }
 
-.well{
+.well {
     margin-top: 12px;
     background: #fff;
     border: 1px solid #dadce0;
@@ -88,7 +88,7 @@ body.a{
     position: relative;
 }
 
-.Top-well{
+.Top-well {
     margin-top: 12px;
     background: #fff;
     border: 1px solid #dadce0;
@@ -98,7 +98,7 @@ body.a{
     position: relative;
 }
 
-.well-color-top{
+.well-color-top {
     background: rgba(0,0,0,0.1);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -109,7 +109,8 @@ body.a{
     width: calc(100% + 2px);
 }
 
-.well-color-top2{
+.well-color-top2 {
+    border-radius: 0;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     height: 10px;
@@ -119,18 +120,21 @@ body.a{
     width: calc(100% + 2px);
 }
 
-.well-color-top3{
+.well-color-top3 {
     background: rgba(0,0,0,0.1);
+    line-height: 30px;
+    font-size: 25px;
+    padding-left: 10px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    height: 10px;
+    height: 30px;
     left: -1px;
     position: absolute;
     top: -1px;
-    width: calc(100% + 2px);
+    width: calc(100% - 8px);
 }
 
-.well-color-left{
+.well-color-left {
     margin-right: 10px;
     font-size: 25px;
     display: flex;
@@ -151,19 +155,19 @@ body.a{
     transition: all 0.5s;
 }
 
-.chose{
+.chose {
     margin-left: 48px;
 }
 
-.btn-primary{
+.btn-primary {
     background: rgba(10,132,255);
 }
 
-.btn-danger{
+.btn-danger {
     background: rgba(255,69,48);
 }
 
-.btn-warning{
+.btn-warning {
     background: rgba(255,159,10);
 }
 
@@ -219,39 +223,39 @@ input.ios:checked:after {
     transition: 0.5s;
 }
 
-.invitecode{
+.invitecode {
     width: 33% !important;
 }
 
-@media (max-width: 412px){
-    .well *{
+@media (max-width: 412px) {
+    .well * {
         font-size: 17px;
     }
 
-    .well{
+    .well {
         height: calc(100vh - 200px) !important;
     }
 
-    .well:not(.active){
+    .well:not(.active) {
         display: none;
     }
 
-    .mnone{
+    .mnone {
         display: none;
     }
 
-    .next{
+    .next {
         position: fixed;
         bottom: 50px;
     }
 
-    .progress{
-        height: 10px;
+    .progress {
+        height: 13px;
     }
 }
 
-@media (min-width: 412px){
-    .pcnone{
+@media (min-width: 412px) {
+    .pcnone {
         display: none;
     }
 }

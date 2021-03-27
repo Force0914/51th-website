@@ -25,6 +25,10 @@
             <input type="button" class="btn" @click="sand()" value="送出">
         </div>
             <input style="float: right; margin-right: 10px;" type="button" class="btn" @click="add()" value="新增一個問題">
+        <div style="position: absolute;top: 40px;right: 25px;">
+            <label for="pcpage">問卷分頁:</label>
+            <input style="width: 50px" type="number" min="1" :max="questions.length" id="pcpage" v-model="pcpage">
+        </div>
     </div>
     <transition-group name="drog" tag="div">
         <div draggable="true" class="well" v-for="(question, index) in questions" @dragstart="dragStart($event, index)" @dragover="allowDrop" @drop="drop($event, index)" :key="question.item">
@@ -62,7 +66,8 @@
                 questions: [],
                 invitecode:<?=json_encode($invitecode)?>,
                 invitecodemod:<?=$_POST['invitecodemod']?>,
-                questionnum:<?=$_POST['questionnum']?>
+                questionnum:<?=$_POST['questionnum']?>,
+                pcpage: <?=$num?>
             }
         },
         methods:{
@@ -80,9 +85,15 @@
             add(){
                 this.num++;
                 this.questions.push({item: this.num, mode: 0, desc: '',required: false, options: [false,'', '', '', '', '', '']})
+                if(this.pcpage == 0){
+                    this.pcpage = this.pcpage + 1
+                }
             },
             del(index){
                 this.questions.splice(index,1);
+                if(this.pcpage == this.questions.length + 1){
+                    this.pcpage = this.pcpage - 1
+                }
             },
             allowDrop(e){
                 e.preventDefault();

@@ -18,8 +18,13 @@ switch ($_GET['do']){
     case "run":
         $invitecode = $_POST['invitecode'];
         $result = mysqli_query($link,"SELECT * FROM code WHERE code = '$invitecode'");
+        $row = mysqli_fetch_assoc($result);
         if(mysqli_num_rows($result) >= 1){
-            echo "run";
+            if ($row['cishu'] >= 0){
+                echo "run";
+            }else{
+                echo "您好！本問卷已達所需之參考數量，感謝您的支持";
+            }
         }else{
             echo "查無此邀請碼 或 此邀請碼已失效";
         }
@@ -89,5 +94,36 @@ switch ($_GET['do']){
         }else{
             mysqli_query($link,"UPDATE question SET locked = 'false' WHERE id = $questionid");
         }
+        break;
+    case "write":
+        $questionid = $_POST['questionid'];
+        $invitecode = $_POST['invitecode'];
+        $result = mysqli_query($link,"SELECT * FROM code WHERE code = '$invitecode'");
+        $row = mysqli_fetch_assoc($result);
+        if ($row ['cishu'] == 1){
+            mysqli_query($link,"UPDATE code SET cishu = -1 WHERE  code = '$invitecode'");
+        }elseif ($row ['cishu'] > 1){
+            mysqli_query($link,"UPDATE code SET cishu = ".($row ['cishu'] - 1)." WHERE  code = '$invitecode'");
+        }
+        mysqli_query($link,"INSERT INTO result(questionid) VALUES ($questionid)");
+        $resultid = mysqli_insert_id($link);
+        foreach ($_POST['questions'] as $key => $question) {
+            $questionsid = $question['id'];
+            $ans = "未填答";
+            if (isset($question['ans'])){
+                $ans = json_encode($question['ans'],JSON_UNESCAPED_UNICODE);
+            }
+            mysqli_query($link,"INSERT INTO answer(resultid, questionsid, ans) VALUES ($resultid,$questionsid,'$ans')");
+            $ansid = mysqli_insert_id($link);
+            if (isset($question['ans'])){
+                if ($question['mode'] == 2 || $question['mode'] == 3){
+                    if ($question['ans'][0] == true || $question['ans'][0] == "true"){
+                            $elseans = $question['else'];
+                        mysqli_query($link,"UPDATE answer SET elseans = '$elseans' WHERE id = $ansid");
+                    }
+                }
+            }
+        }
+        echo "作答完成";
         break;
 }

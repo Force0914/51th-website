@@ -14,10 +14,10 @@
         <hr>
         <h3 v-if="admin">登入</h3>
         <h3 v-else>您好!</h3>
-            <input type="text" name="account" id="account" placeholder="帳號" v-model="account" v-if="admin">
+            <input type="text" name="account" id="account" placeholder="帳號" v-model="account" v-if="admin" @keydown.enter="submit('login')">
             <br v-if="admin">
-            <input type="password" name="password" id="password" placeholder="密碼" v-model="password" v-if="admin">
-            <input type="text" name="invitecode" id="invitecode" placeholder="請輸入填寫問卷邀請碼" v-model="invitecode" v-else>
+            <input type="password" name="password" id="password" placeholder="密碼" v-model="password" v-if="admin" @keydown.enter="submit('login')">
+            <input type="text" name="invitecode" id="invitecode" placeholder="請輸入填寫問卷邀請碼" v-model="invitecode" @keydown.enter="submit('run')" v-else>
             <hr>
             <input type="submit" class="btn" value="登入" @click="submit('login')" v-if="admin">
             <input type="submit" class="btn" value="繼續" @click="submit('run')" v-else>
