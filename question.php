@@ -1,8 +1,10 @@
 <?php
-    $title = $_POST['title'];
-    $num = $_POST['num'];
-    $invitecodemod = $_POST['invitecodemod'];
-    $invitecode = $_POST['invitecode'];
+    session_start();
+    $title = $_SESSION['title'];
+    $num = $_SESSION['num'];
+    $invitecodemod = $_SESSION['invitecodemod'];
+    $invitecode = $_SESSION['invitecode'];
+    $questionnum = $_SESSION['questionnum'];
 ?>
 <!doctype html>
 <html lang="zh_tw">
@@ -65,8 +67,8 @@
                 num: <?=$num?>,
                 questions: [],
                 invitecode:<?=json_encode($invitecode)?>,
-                invitecodemod:<?=$_POST['invitecodemod']?>,
-                questionnum:<?=$_POST['questionnum']?>,
+                invitecodemod:<?=$invitecodemod?>,
+                questionnum:<?=$questionnum?>,
                 pcpage: <?=$num?>
             }
         },

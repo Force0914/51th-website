@@ -11,6 +11,7 @@ $questiondata = mysqli_query($link,"SELECT * FROM question WHERE id = $questioni
 $questiondatarow = mysqli_fetch_assoc($questiondata);
 $questionsdata = mysqli_query($link,"SELECT * FROM questions WHERE questionid = $questionid ORDER BY item");
 $title = $questiondatarow['name'];
+$pcpage = $questiondatarow['pcpage'];
 $num = mysqli_num_rows($questionsdata);
 $data = array();
 while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
@@ -44,20 +45,18 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
     <div class="Top-well">
         <div class="well-color-top2 progress progress-info progress-striped active">
             <div class="bar pcnone" :style="{width: ((mpage+1)/questions.length)*100 + '%'}"></div>
+            <div class="bar mnone" :style="{width: (ppage/(Math.ceil(questions.length/pcpage)))*100 + '%'}"></div>
         </div>
         <h1><?=$title?></h1>
+        <p style="position: absolute;top: 10px;right: 10px;" class="mnone">已完成 {{ (ppage/(Math.ceil(questions.length/pcpage)))*100 + '% ' }}題目</p>
+        <p style="position: absolute;top: 10px;right: 10px;" class="pcnone">已完成 {{((mpage+1)/questions.length)*100 + '%'}} 題目</p>
         <input type="hidden" name="title" value="<?=$title?>">
-        <div style="float: right" class="btn-group">
-            <input type="button" class="btn" @click="cancel()" value="取消">
-            <input type="button" class="btn" @click="check()" value="送出">
-        </div>
     </div>
     <div>
-        <div :class="{well:true,active:index == mpage}" v-for="(question, index) in questions" :key="question.item">
-            <div class="well-color-top3" style="margin: 0">{{index + 1}}<p style="float: right;font-size: 15px;margin-right: 10px;color: green;">{{ types[question.mode] }}</p></div>
+        <div :class="{well:true,active:index == mpage}" v-for="(question, index) in fuck" :key="question.id">
+            <div class="well-color-top3" style="margin: 0"><span style="color: red;">{{question.required ?　'*' : '&nbsp;'}}</span>{{index + 1}}<p style="float: right;font-size: 15px;margin-right: 10px;color: green;">{{ types[question.mode] }}</p></div>
             <div style="margin-top: 30px">
-                <p>題目說明：{{ question.desc }}</p>
-                <p style="color: red;position: absolute;left: -20px;top: 10px;width: 10px" v-if="question.required">＊必填</p><br><br>
+                <p>題目說明：{{ question.desc }}</p><br><br>
                 <p>題目選項：</p><br>
                 <div class="chose">
                     <label v-if="question.mode == 1"><input type="radio" value="是" v-model="question.ans[0]">是</label>
@@ -66,7 +65,7 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                         <label class="span5" v-for="(data,n) in question.options" v-if="n > 0"><input type="radio" :value="n" v-model="question.ans[0]">{{ question.options[n] }}</label>
                     </div>
                     <div class="row" v-if="question.mode == 3">
-                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0"><input type="checkbox" value="n" v-model="question.ans[n]">{{ question.options[n] }}</label>
+                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0"><input type="checkbox" v-model="question.ans[n]">{{ question.options[n] }}</label>
                     </div>
                     <div class="row">
                         <label class="span5" v-if="question.options[0]"><input v-model="question.ans[0]" value="true" :type="question.mode == 2 ? 'radio' : 'checkbox'">其他：<input style="margin: 0" type="text" v-model="question.else" :disabled="question.ans[0] != true && question.ans[0] !='true'"></label>
@@ -76,13 +75,20 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                 <br>
                 <div style="width: 322px;" class="row pcnone next">
                     <table style="width: 100%;table-layout: fixed;">
-                        <td style="text-align: center;"><input type="button" class="btn" value="上一題" @click="mpage--" :disabled="index == 0"></td>
-                        <td style="text-align: center;"><p style="font-size: 13px;width: 100%;" class="pcnone">已完成{{((mpage+1)/questions.length)*100 + '%'}}題目</p></td>
-                        <td style="text-align: center;"><input type="button" class="btn" value="下一題" @click="mpage++" :disabled="index == questions.length - 1"></td>
+                        <td style="text-align: center;" v-show="index != 0"><input type="button" class="btn" value="上一頁" @click="mpage--"></td>
+                        <td style="text-align: center;" v-show="index == 0"><input type="button" class="btn" value="取消" @click="cancel()"></td>
+                        <td style="text-align: center;" v-show="index != questions.length - 1"><input type="button" class="btn" value="下一頁" @click="mpage++"></td>
+                        <td style="text-align: center;" v-show="index == questions.length - 1"><input type="button" class="btn" value="送出" @click="check()"></td>
                     </table>
                     <br>
                 </div>
             </div>
+        </div>
+        <div style="display: flex;justify-content: center;align-items: center;" class="well">
+                <input style="margin-right: 15px" type="button" class="btn" value="上一頁" @click="ppage--" v-show="ppage != 1">
+                <input style="margin-right: 15px" type="button" class="btn" value=取消 @click="cancel()" v-show="ppage == 1">
+                <input style="margin-left: 15px" type="button" class="btn" value="下一頁" @click="ppage++" v-show="ppage != Math.ceil(questions.length/pcpage)">
+                <input style="margin-left: 15px" type="button" class="btn" value="送出" @click="check()" v-show="ppage == Math.ceil(questions.length/pcpage)">
         </div>
     </div>
 </div>
@@ -95,7 +101,10 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                 invitecode: "<?=$_GET['code']?>",
                 title: "<?=$title?>",
                 questions: <?=json_encode($data)?>,
-                mpage: 0
+                mpage: 0,
+                pcpage: <?=$pcpage?>,
+                ppage: 1,
+                innerWidth: $(window).width()
             }
         },
         methods:{
@@ -133,6 +142,23 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                         history.go(0);
                     }
                 })
+            }
+        },
+        computed:{
+            fuck(){
+                if (this.innerWidth > 412){
+                    return this.questions.filter((value,i) => {
+                        return i >= (this.pcpage*(this.ppage - 1)) && i < (this.pcpage*(this.ppage))
+                    })
+                }else{
+                    return this.questions
+                }
+            }
+        },
+        mounted(){
+            const _this  = this
+            window.onresize = function () {
+                _this.innerWidth = $(window).width()
             }
         }
     })

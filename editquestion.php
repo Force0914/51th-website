@@ -5,6 +5,7 @@
     $questiondatarow = mysqli_fetch_assoc($questiondata);
     $questionsdata = mysqli_query($link,"SELECT * FROM questions WHERE questionid = $questionid ORDER BY item");
     $title = $questiondatarow['name'];
+    $pcpage = $questiondatarow['pcpage'];
     $num = mysqli_num_rows($questionsdata);
     $data = array();
     while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
@@ -37,8 +38,7 @@
 <div class="container" id='app'>
     <div class="Top-well">
         <div class="well-color-top"></div>
-        <h1><?=$title?></h1>
-        <input type="hidden" name="title" value="<?=$title?>">
+        <h1><input style="margin: 0;height: 25px;width: 300px;font-size: 30px;" type="text" name="title" v-model="title"></h1>
         <div style="float: right" class="btn-group">
             <input type="button" class="btn" @click="cancel()" value="取消">
             <input type="button" class="btn" @click="sand()" value="送出">
@@ -85,7 +85,7 @@
                 num: <?=$num?>,
                 questions: <?=json_encode($data)?>,
                 delete: [],
-                pcpage: <?=$num?>
+                pcpage: <?=$pcpage?>
             }
         },
         methods:{

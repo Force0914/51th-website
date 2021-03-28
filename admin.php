@@ -16,6 +16,7 @@
         <tr>
             <th>編號</th>
             <th>問卷名稱</th>
+            <th>填寫數量</th>
             <th>功能</th>
             <th>鎖定</th>
         </tr>
@@ -33,13 +34,35 @@
                             $i++;
                             $id = $row['id'];
                             $name = $row['name'];
+                            $aresult = mysqli_query($link,"SELECT COUNT(*) FROM result WHERE questionid = $id");
+                            $count = mysqli_fetch_assoc($aresult);
+                            $count = $count['COUNT(*)'];
                             if ($row['locked'] == "true"){
                                 $row['locked'] = true;
                             }else{
                                 $row['locked'] = false;
                             }
                             $lock[$id] = $row['locked'];
-                            echo "<tr><td>$i</td><td>$name</td><td><div class='btn-group'><a class='btn btn-primary' @click='editquestion($id)'>編輯</a><a class='btn btn-danger' @click='deletequestion($id)'>刪除</a></div></td><td><input type='checkbox' class='ios' id='checkbox-1' v-model='lock[$id]' @click='lockquestion($id)'></td></tr>";
+                            echo "<tr>
+                                    <td>$i</td>
+                                    <td>$name</td>
+                                    <td>$count 份</td>
+                                    <td>
+                                        <div class='btn-group'>
+                                            <a class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>動作 <span class='caret'></span></a>
+                                            <ul class='dropdown-menu'>
+                                                <li><a @click='editquestion($id)'>編輯</a></li>
+                                                <li class='divider'></li>
+                                                <li><a @click='copyquestion($id)'>複製</a></li>
+                                                <li class='divider'></li>
+                                                <li><a @click='deletequestion($id)'>刪除</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type='checkbox' class='ios' id='checkbox-1' v-model='lock[$id]' @click='lockquestion($id)'>
+                                    </td>
+                                    </tr>";
                         }
                     ?>
                     </tbody>
@@ -52,7 +75,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="myModalLabel">新增問卷</h3>
         </div>
-        <form action="question.php" method="POST">
+        <form action="question.php" method="POST" @submit.prevent="submit()">
             <div class="modal-body">
                 <label>問卷名稱：<input type="text" name="title" v-model="title" required></label>
                 <label>　題數：<input type="number" name="num" min="1" v-model="num" required></label><br><br>
@@ -64,7 +87,7 @@
                 <div>
                     <label v-if="invitecodemod == '1'"><input v-model="invitecode[0]" name="invitecode[]" type="text" required></label>
                     <div v-if="invitecodemod == '2'">
-                        <label class="invitecode" style="margin-bottom: 5px;" v-for="index in questionnum">{{ index }}. <input style="margin: 0" name="invitecode[]" v-model="invitecode[index]" type="text" required></label>
+                        <label class="invitecode" style="margin-bottom: 5px;" v-for="index in questionnum">{{ index }}. <input style="margin: 0" name="invitecode[]" v-model="invitecode[index]" type="text" @change="happy(index)" required></label>
                     </div>
                 </div>
             </div>
@@ -89,6 +112,29 @@
             }
         },
         methods:{
+            happy(i){
+                let haha = this.invitecode.filter(fuck => fuck == this.invitecode[i])
+                if (haha.length > 1){
+                    this.invitecode[i] = null
+                    this.$forceUpdate()
+                    alert("偵測到重覆邀請碼")
+                }
+            },
+            submit(){
+                const _this = this
+                $.post(`api.php?do=checkinvitecode`,{
+                    invitecodemod: this.invitecodemod,
+                    invitecode: this.invitecode
+                },function (a){
+                    if(a == "wedidit"){
+                        $.post(`api.php?do=savesession`,_this.$data,function (b){
+                            location.href = "question.php"
+                        })
+                    }else{
+                        alert(`此邀請碼已存在，請更換邀請碼 => ${a}`)
+                    }
+                })
+            },
             lockquestion(questionid){
                 $.post(`api.php?do=lock`,{
                     questionid:questionid,
@@ -103,7 +149,7 @@
                 }
             },
             deletequestion(questionid){
-                $.post(`api.php?do=deletequestion`,{questionid:questionid},function (a){
+                $.post(`api.php?do=deletequestion`,{questionid},function (a){
                     alert(a);
                     history.go(0)
                 })
@@ -120,6 +166,16 @@
                     alert("題數不得為空")
                     return
                 }
+            },
+            copyquestion(questionid){
+                let copyans = false
+                if (confirm("是否要連答案一起複製")){
+                    copyans = true
+                }
+                $.post(`api.php?do=copyquestion`,{questionid,copyans},function (a){
+                    alert("複製成功")
+                    history.go(0)
+                })
             }
         },
         watch: {

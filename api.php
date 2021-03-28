@@ -1,4 +1,5 @@
 <?php
+session_start();
 $link = mysqli_connect("127.0.0.1","admin","1234","51");
 switch ($_GET['do']){
     case "login":
@@ -30,15 +31,15 @@ switch ($_GET['do']){
         }
         break;
     case "creatquestion":
-        mysqli_query($link,"INSERT INTO question(name,invitecodemod) VALUES ('".$_POST['title']."','".$_POST['invitecodemod']."')");
+        mysqli_query($link,"INSERT INTO question(name,invitecodemod,pcpage) VALUES ('".$_POST['title']."','".$_POST['invitecodemod']."',".$_POST['pcpage'].")");
         $nameid = mysqli_insert_id($link);
         $i = 0;
             if(isset($_POST['questions'])){
                 if ($_POST['invitecodemod'] == "1"){
-                    mysqli_query($link,"INSERT INTO code(questionid, code, cishu) VALUES ($nameid,'".$_POST['invitecode'][0]."',".$_POST['questionnum'].")");
+                        mysqli_query($link,"INSERT INTO code(questionid, code, cishu) VALUES ($nameid,'".$_POST['invitecode'][0]."',".$_POST['questionnum'].")");
                 }else{
                     for ( $i=0 ; $i<$_POST['questionnum'] ; $i++ ) {
-                        mysqli_query($link,"INSERT INTO code(questionid, code, cishu) VALUES ($nameid,'".$_POST['invitecode'][$i]."',1)");
+                            mysqli_query($link,"INSERT INTO code(questionid, code, cishu) VALUES ($nameid,'".$_POST['invitecode'][$i]."',1)");
                     }
                 }
                 foreach ($_POST['questions'] as $key => $question){
@@ -65,6 +66,7 @@ switch ($_GET['do']){
     case "editquestion":
         if (isset($_POST['questionid'])){
             if(isset($_POST['questions'])) {
+                mysqli_query($link,"UPDATE question SET pcpage=".$_POST['pcpage'].",name='".$_POST['title']."' WHERE id = ".$_POST['questionid']);
                 if (isset($_POST['delete'])){
                     foreach ($_POST['delete'] as $deleteid){
                         mysqli_query($link,"DELETE FROM questions WHERE id = $deleteid");
@@ -85,6 +87,17 @@ switch ($_GET['do']){
             }
         }else{
             echo "發生了意料之外的錯誤";
+        }
+        break;
+    case "copyquestion":
+        $questionid = $_POST['questionid'];
+        mysqli_query($link,"INSERT INTO question SELECT null, CONCAT('複製_',name), invitecodemod, pcpage, locked FROM question WHERE id = $questionid");
+        $copyquestionid = mysqli_insert_id($link);
+        mysqli_query($link,"INSERT INTO questions SELECT null, $copyquestionid, description, mode, item, options, required FROM questions WHERE questionid = $questionid");
+        if ($_POST['copyans']){
+            mysqli_query($link,"INSERT INTO result SELECT null, $copyquestionid FROM result WHERE questionid = $questionid");
+            $copyresultid = mysqli_insert_id($link);
+            mysqli_query($link,"INSERT INTO answer SELECT null, answer.resultid, $copyresultid, answer.ans, answer.elseans FROM result,answer WHERE answer.resultid = result.id AND result.questionid = $questionid");
         }
         break;
     case "lock":
@@ -125,5 +138,35 @@ switch ($_GET['do']){
             }
         }
         echo "作答完成";
+        break;
+    case "checkinvitecode":
+        if ($_POST['invitecodemod'] == "1"){
+            $coderesult = mysqli_query($link,"SELECT * FROM code WHERE code = '".$_POST['invitecode'][0]."'");
+            if (mysqli_num_rows($coderesult) > 0){
+                echo $_POST['invitecode'][0];
+                die();
+            }else{
+                echo "wedidit";
+                die();
+            }
+        }else{
+            for ( $i=0 ; $i<$_POST['questionnum'] ; $i++ ) {
+                $coderesult = mysqli_query($link,"SELECT * FROM code WHERE code = '".$_POST['invitecode'][$i]."'");
+                if (mysqli_num_rows($coderesult) > 0){
+                    echo $_POST['invitecode'][$i];
+                    die();
+                }else{
+                    echo "wedidit";
+                    die();
+                }
+            }
+        }
+        break;
+    case "savesession":
+        $_SESSION['title'] = $_POST['title'];
+        $_SESSION['num'] = $_POST['num'];
+        $_SESSION['invitecodemod'] = $_POST['invitecodemod'];
+        $_SESSION['invitecode'] = $_POST['invitecode'];
+        $_SESSION['questionnum'] = $_POST['questionnum'];
         break;
 }
