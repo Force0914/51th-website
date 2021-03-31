@@ -10,7 +10,10 @@
 <body class="txt-center">
 <div id="app" class="container">
     <h1>手機問卷管理系統</h1>
-    <input type="button" class="btn" value="新增問卷" @click="showModal('modal')"><br><br>
+    <div class="btn-group">
+    <input type="button" class="btn" value="新增問卷" @click="showModal('modal')">
+    <input type="button" class="btn" value="問卷統計">
+    </div>
     <table class="table">
         <thead>
         <tr>
@@ -51,7 +54,7 @@
                                         <div class='btn-group'>
                                             <a class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>動作 <span class='caret'></span></a>
                                             <ul class='dropdown-menu'>
-                                                <li><a @click='editquestion($id)'>編輯</a></li>
+                                                <li><a @click='editquestion($id)'>修改</a></li>
                                                 <li class='divider'></li>
                                                 <li><a @click='copyquestion($id)'>複製</a></li>
                                                 <li class='divider'></li>
@@ -112,6 +115,9 @@
             }
         },
         methods:{
+            statistics(){
+                location.href = "statisticslist.php";
+            },
             happy(i){
                 let haha = this.invitecode.filter(fuck => fuck == this.invitecode[i])
                 if (haha.length > 1){
