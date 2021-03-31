@@ -11,8 +11,8 @@
 <div id="app" class="container">
     <h1>手機問卷管理系統</h1>
     <div class="btn-group">
-    <input type="button" class="btn" value="新增問卷" @click="showModal('modal')">
-    <input type="button" class="btn" value="問卷統計" @click="statistics()">
+        <input type="button" class="btn" value="新增問卷" @click="showModal('modal')">
+        <input type="button" class="btn" value="問卷統計">
     </div>
     <table class="table">
         <thead>
@@ -24,29 +24,29 @@
             <th>鎖定</th>
         </tr>
         </thead>
+        <?php
+        $link = mysqli_connect("127.0.0.1","admin","1234","51");
+        $result = mysqli_query($link,"SELECT * FROM question");
+        $lock = array();
+        if (mysqli_num_rows($result) >=1){
+            ?>
+            <tbody>
             <?php
-                $link = mysqli_connect("127.0.0.1","admin","1234","51");
-                $result = mysqli_query($link,"SELECT * FROM question");
-                $lock = array();
-                if (mysqli_num_rows($result) >=1){
-                    ?>
-                    <tbody>
-                    <?php
-                        $i = 0;
-                        while ($row = mysqli_fetch_assoc($result)){
-                            $i++;
-                            $id = $row['id'];
-                            $name = $row['name'];
-                            $aresult = mysqli_query($link,"SELECT COUNT(*) FROM result WHERE questionid = $id");
-                            $count = mysqli_fetch_assoc($aresult);
-                            $count = $count['COUNT(*)'];
-                            if ($row['locked'] == "true"){
-                                $row['locked'] = true;
-                            }else{
-                                $row['locked'] = false;
-                            }
-                            $lock[$id] = $row['locked'];
-                            echo "<tr>
+            $i = 0;
+            while ($row = mysqli_fetch_assoc($result)){
+                $i++;
+                $id = $row['id'];
+                $name = $row['name'];
+                $aresult = mysqli_query($link,"SELECT COUNT(*) FROM result WHERE questionid = $id");
+                $count = mysqli_fetch_assoc($aresult);
+                $count = $count['COUNT(*)'];
+                if ($row['locked'] == "true"){
+                    $row['locked'] = true;
+                }else{
+                    $row['locked'] = false;
+                }
+                $lock[$id] = $row['locked'];
+                echo "<tr>
                                     <td>$i</td>
                                     <td>$name</td>
                                     <td>$count 份</td>
@@ -66,12 +66,12 @@
                                         <input type='checkbox' class='ios' id='checkbox-1' v-model='lock[$id]' @click='lockquestion($id)'>
                                     </td>
                                     </tr>";
-                        }
-                    ?>
-                    </tbody>
-        <?php
-                }
+            }
             ?>
+            </tbody>
+            <?php
+        }
+        ?>
     </table>
     <div id="modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
