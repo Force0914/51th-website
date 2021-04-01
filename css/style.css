@@ -60,6 +60,15 @@ body.a {
     height: 100vh;
 }
 
+.btn-group input[list="list"]{
+    border-radius: unset;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    height: 24px;
+    margin: 0;
+    width: 160px;
+}
+
 .box {
     border-radius: 9%;
     text-align: center;

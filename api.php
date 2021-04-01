@@ -36,10 +36,11 @@ switch ($_GET['do']){
         $i = 0;
             if(isset($_POST['questions'])){
                 if ($_POST['invitecodemod'] == "1"){
-                        mysqli_query($link,"INSERT INTO code(questionid, code, cishu) VALUES ($nameid,'".$_POST['invitecode'][0]."',".$_POST['questionnum'].")");
+                        mysqli_query($link,"INSERT INTO code(questionid, code, cishu) VALUES ($nameid,'".$_POST['invitecode']."',".$_POST['questionnum'].")");
                 }else{
-                    for ( $i=0 ; $i<$_POST['questionnum'] ; $i++ ) {
-                            mysqli_query($link,"INSERT INTO code(questionid, code, cishu) VALUES ($nameid,'".$_POST['invitecode'][$i]."',1)");
+                    for ( $i=1 ; $i<=$_POST['questionnum'] ; $i++ ) {
+                            $num = str_pad($i,4,"0",STR_PAD_LEFT);
+                            mysqli_query($link,"INSERT INTO code(questionid, code, cishu) VALUES ($nameid,'".$_POST['invitecode'].$num."',1)");
                     }
                 }
                 foreach ($_POST['questions'] as $key => $question){
@@ -139,21 +140,29 @@ switch ($_GET['do']){
         }
         echo "作答完成";
         break;
+    case "savesession":
+        $_SESSION['title'] = $_POST['title'];
+        $_SESSION['num'] = $_POST['num'];
+        $_SESSION['invitecodemod'] = $_POST['invitecodemod'];
+        $_SESSION['invitecode'] = $_POST['invitecode'];
+        $_SESSION['questionnum'] = $_POST['questionnum'];
+        break;
     case "checkinvitecode":
         if ($_POST['invitecodemod'] == "1"){
-            $coderesult = mysqli_query($link,"SELECT * FROM code WHERE code = '".$_POST['invitecode'][0]."'");
+            $coderesult = mysqli_query($link,"SELECT * FROM code WHERE code = '".$_POST['invitecode']."'");
             if (mysqli_num_rows($coderesult) > 0){
-                echo $_POST['invitecode'][0];
+                echo $_POST['invitecode'];
                 die();
             }else{
                 echo "wedidit";
                 die();
             }
         }else{
-            for ( $i=0 ; $i<$_POST['questionnum'] ; $i++ ) {
-                $coderesult = mysqli_query($link,"SELECT * FROM code WHERE code = '".$_POST['invitecode'][$i]."'");
+            for ( $i=1 ; $i<=$_POST['questionnum'] ; $i++ ) {
+                $num = str_pad($i,4,"0",STR_PAD_LEFT);
+                $coderesult = mysqli_query($link,"SELECT * FROM code WHERE code = '".$_POST['invitecode'].$num."'");
                 if (mysqli_num_rows($coderesult) > 0){
-                    echo $_POST['invitecode'][$i];
+                    echo $_POST['invitecode'].$num;
                     die();
                 }else{
                     echo "wedidit";
@@ -162,11 +171,29 @@ switch ($_GET['do']){
             }
         }
         break;
-    case "savesession":
-        $_SESSION['title'] = $_POST['title'];
-        $_SESSION['num'] = $_POST['num'];
-        $_SESSION['invitecodemod'] = $_POST['invitecodemod'];
-        $_SESSION['invitecode'] = $_POST['invitecode'];
-        $_SESSION['questionnum'] = $_POST['questionnum'];
+    case "searchinvitecode":
+        mysqli_query($link,"");
+        echo "查無此邀請碼資料";
+        break;
+    case "outputquestion":
+        $questionid = $_POST['questionid'];
+        $mode = array("未設定","是非題","單選題","多選題","問答題");
+        $questionresult = mysqli_query($link,"SELECT * FROM question WHERE id = $questionid");
+        $questionrow = mysqli_fetch_assoc($questionresult);
+        $questionsresult = mysqli_query($link,"SELECT * FROM questions WHERE questionid = $questionid ORDER BY item");
+        $filename = $_POST['questionid'];
+        $fp = fopen("$filename.csv", 'w');
+            fputcsv($fp,array("[問卷]"));
+            fputcsv($fp,array($questionrow['name']));
+            while ($questionsrow = mysqli_fetch_assoc($questionsresult)){
+                $options = json_encode($questionsrow['options']);
+                array_shift($options);
+                fputcsv($fp,array($mode[$questionsrow['mode']],$questionsrow['description']).$options);
+            }
+            var_dump($options);
+            fputcsv($fp,array("[問卷結束]"));
+        fclose($fp);
+        break;
+    case "inputquestion":
         break;
 }
