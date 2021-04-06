@@ -68,7 +68,7 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                         <label class="span5" v-for="(data,n) in question.options" v-if="n > 0"><input type="checkbox" v-model="question.ans[n]">{{ question.options[n] }}</label>
                     </div>
                     <div class="row">
-                        <label class="span5" v-if="question.options[0]"><input v-model="question.ans[0]" value="true" :type="question.mode == 2 ? 'radio' : 'checkbox'">其他：<input style="margin: 0" type="text" v-model="question.else" :disabled="question.ans[0] != true && question.ans[0] !='true'"></label>
+                        <label class="span5" v-if="question.options[0]"><input v-model="question.ans[0]" value="true" :type="question.mode == 2 ? 'radio' : 'checkbox'">其他：<input style="margin: 0" type="text" v-model="question.else" :disabled="question.ans[0] !== true && question.ans[0] !== 'true'"></label>
                     </div>
                     <label v-if="question.mode == 4"><input style="margin-left: 16px;" type="text" placeholder="自行輸入" v-model="question.ans[0]"></label>
                 </div>
@@ -119,7 +119,7 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                         if (question.ans.length <= 0 || ansfilter.length <= 0){
                             done = false;
                         }
-                        if(question.ans[0] == true || question.ans[0] == "true"){
+                        if(question.ans[0] === true || question.ans[0] === "true"){
                             if(question.else.length <= 0){
                                 done = false;
                             }

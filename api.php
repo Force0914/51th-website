@@ -114,16 +114,17 @@ switch ($_GET['do']){
         $invitecode = $_POST['invitecode'];
         $result = mysqli_query($link,"SELECT * FROM code WHERE code = '$invitecode'");
         $row = mysqli_fetch_assoc($result);
+        $invitecodeid = $row['id'];
         if ($row ['cishu'] == 1){
             mysqli_query($link,"UPDATE code SET cishu = -1 WHERE  code = '$invitecode'");
         }elseif ($row ['cishu'] > 1){
             mysqli_query($link,"UPDATE code SET cishu = ".($row ['cishu'] - 1)." WHERE  code = '$invitecode'");
         }
-        mysqli_query($link,"INSERT INTO result(questionid) VALUES ($questionid)");
+        mysqli_query($link,"INSERT INTO result(questionid,codeid) VALUES ($questionid,$invitecodeid)");
         $resultid = mysqli_insert_id($link);
         foreach ($_POST['questions'] as $key => $question) {
             $questionsid = $question['id'];
-            $ans = "未填答";
+            $ans = "[\"未填答\"]";
             if (isset($question['ans'])){
                 $ans = json_encode($question['ans'],JSON_UNESCAPED_UNICODE);
             }
@@ -181,18 +182,69 @@ switch ($_GET['do']){
         $questionresult = mysqli_query($link,"SELECT * FROM question WHERE id = $questionid");
         $questionrow = mysqli_fetch_assoc($questionresult);
         $questionsresult = mysqli_query($link,"SELECT * FROM questions WHERE questionid = $questionid ORDER BY item");
+        $result = mysqli_query($link,"SELECT * FROM result WHERE questionid = $questionid");
+        $resultresult = mysqli_query($link,"SELECT * FROM result,answer,questions WHERE result.id = answer.resultid AND answer.questionsid = questions.id AND result.questionid = $questionid");
         $filename = $_POST['questionid'];
         $fp = fopen("$filename.csv", 'w');
-            fputcsv($fp,array("[問卷]"));
-            fputcsv($fp,array($questionrow['name']));
+            fwrite($fp,"[問卷]\n");
+            fwrite($fp,$questionrow['name']."\n");
             while ($questionsrow = mysqli_fetch_assoc($questionsresult)){
-                $options = json_encode($questionsrow['options']);
+                $options = json_decode($questionsrow['options']);
                 array_shift($options);
-                fputcsv($fp,array($mode[$questionsrow['mode']],$questionsrow['description']).$options);
+                array_unshift($options,$mode[$questionsrow['mode']],$questionsrow['description']);
+                if ($questionsrow['mode'] == 1){
+                    $options = array($mode[$questionsrow['mode']],$questionsrow['description'],"是","否");
+                }elseif ($questionsrow['mode'] == 4){
+                    $options = array($mode[$questionsrow['mode']],$questionsrow['description']);
+                }
+                fwrite($fp,implode(",",$options)."\n");
             }
-            var_dump($options);
-            fputcsv($fp,array("[問卷結束]"));
-        fclose($fp);
+            fwrite($fp,"[問卷結束]\n");
+            fwrite($fp,"[填答]\n");
+            $oldid = null;
+            $allans = array();
+            $answer = array();
+            $i = 0;
+            $resultallrow = mysqli_fetch_all($result);
+            while ($resultrow = mysqli_fetch_assoc($resultresult)){
+                $ans = json_decode($resultrow['ans']);
+                if ($ans[0] == ""){
+                    array_shift($ans);
+                }elseif ($ans[0] == "true" || $ans[0] === true){
+                    array_shift($ans);
+                }
+                if (count($ans) > 1){
+                    print_r($ans);
+                    for ($j = 0;$j <= count($ans)-1;$j++){
+                        if($ans[$j] === "true"){
+                            $b = mysqli_query($link,"SELECT * FROM questions WHERE id = ".$resultrow['questionsid']);
+                            $c = mysqli_fetch_assoc($b);
+                            $d = json_decode($c['options']);
+                            $ans[$j] = $d[$j+1];
+                        }
+                    }
+                }elseif (count($ans) <= 0){
+                    array_push($ans,"未填答");
+                }
+                if ($oldid == $resultrow['resultid']){
+                    array_push($answer,implode(" ",$ans));
+                }else{
+                    print_r($resultrow['ans']);
+                    if ($i != 0){
+                        array_push($allans,$answer);
+                        $answer = array();
+                    }
+                    $answer[0] = implode(" ",json_decode($resultrow['ans']));
+                    $i++;
+                }
+                $oldid = $resultrow['resultid'];
+            }
+            array_push($allans,$answer);
+            foreach ($allans as $value){
+                fwrite($fp,implode(",",$value)."\n");
+            }
+            fwrite($fp,"[填答結束]");
+            fclose($fp);
         break;
     case "inputquestion":
         break;
