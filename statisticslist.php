@@ -56,11 +56,13 @@
                                         <div class='btn-group'>
                                             <a class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>動作 <span class='caret'></span></a>
                                             <ul class='dropdown-menu'>
+                                                <li><a @click='statisticsquestion($id)'>統計結果</a></li>
+                                                <li class='divider'></li>
                                                 <li><a @click='copyquestion($id)'>複製</a></li>
                                                 <li class='divider'></li>
                                                 <li><a @click='deletequestion($id)'>刪除</a></li>
                                                 <li class='divider'></li>
-                                                <li><a @click='outputquestion($id)'>問卷輸出</a></li>
+                                                <li><a @click='outputquestion(`$name`,$id)'>問卷輸出</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -85,8 +87,15 @@
             }
         },
         methods:{
-            outputquestion(questionid){
-                $.post(`api.php?do=outputquestion`,{questionid},function (a){})
+            statisticsquestion(questionid){
+
+            },
+            outputquestion(name,questionid){
+                $.post(`api.php?do=outputquestion`,{name,questionid},function (a){
+                    if (a){
+                        location.href = `./files/${name}.csv`
+                    }
+                })
             },
             inputquestion(questionid){
                 $.post(`api.php?do=inputquestion`,{questionid},function (a){})

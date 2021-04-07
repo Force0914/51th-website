@@ -44,12 +44,12 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
 <div class="container" id='app'>
     <div class="Top-well">
         <div class="well-color-top2 progress progress-info progress-striped active">
-            <div class="bar pcnone" :style="{width: ((mpage+1)/questions.length)*100 + '%'}"></div>
-            <div class="bar mnone" :style="{width: (ppage/(Math.ceil(questions.length/pcpage)))*100 + '%'}"></div>
+            <div class="bar pcnone" :style="{width: (mpage/questions.length)*100 + '%'}"></div>
+            <div class="bar mnone" :style="{width: ((ppage-1)/(Math.ceil(questions.length/pcpage)))*100 + '%'}"></div>
         </div>
         <h1><?=$title?></h1>
-        <p style="position: absolute;top: 10px;right: 10px;" class="mnone">已完成 {{ (ppage/(Math.ceil(questions.length/pcpage)))*100 + '% ' }}題目</p>
-        <p style="position: absolute;top: 10px;right: 10px;" class="pcnone">已完成 {{((mpage+1)/questions.length)*100 + '%'}} 題目</p>
+        <p style="position: absolute;top: 10px;right: 10px;" class="mnone">已完成 {{ ((ppage-1)/(Math.ceil(questions.length/pcpage)))*100 + '% ' }}題目</p>
+        <p style="position: absolute;top: 10px;right: 10px;" class="pcnone">已完成 {{(mpage/questions.length)*100 + '%'}} 題目</p>
         <input type="hidden" name="title" value="<?=$title?>">
     </div>
     <div>
@@ -62,10 +62,10 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                     <label v-if="question.mode == 1"><input type="radio" value="是" v-model="question.ans[0]">是</label>
                     <label v-if="question.mode == 1"><input type="radio" value="否" v-model="question.ans[0]">否</label>
                     <div class="row" v-if="question.mode == 2">
-                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0"><input type="radio" :value="n" v-model="question.ans[0]">{{ question.options[n] }}</label>
+                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data != ''"><input type="radio" :value="n" v-model="question.ans[0]">{{ question.options[n] }}</label>
                     </div>
                     <div class="row" v-if="question.mode == 3">
-                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0"><input type="checkbox" v-model="question.ans[n]">{{ question.options[n] }}</label>
+                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data != ''"><input type="checkbox" v-model="question.ans[n]">{{ question.options[n] }}</label>
                     </div>
                     <div class="row">
                         <label class="span5" v-if="question.options[0]"><input v-model="question.ans[0]" value="true" :type="question.mode == 2 ? 'radio' : 'checkbox'">其他：<input style="margin: 0" type="text" v-model="question.else" :disabled="question.ans[0] !== true && question.ans[0] !== 'true'"></label>

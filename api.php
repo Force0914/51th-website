@@ -184,8 +184,8 @@ switch ($_GET['do']){
         $questionsresult = mysqli_query($link,"SELECT * FROM questions WHERE questionid = $questionid ORDER BY item");
         $result = mysqli_query($link,"SELECT * FROM result WHERE questionid = $questionid");
         $resultresult = mysqli_query($link,"SELECT * FROM result,answer,questions WHERE result.id = answer.resultid AND answer.questionsid = questions.id AND result.questionid = $questionid");
-        $filename = $_POST['questionid'];
-        $fp = fopen("$filename.csv", 'w');
+        $filename = $_POST['name'];
+        $fp = fopen("./files/$filename.csv", 'w');
             fwrite($fp,"[問卷]\n");
             fwrite($fp,$questionrow['name']."\n");
             while ($questionsrow = mysqli_fetch_assoc($questionsresult)){
@@ -214,7 +214,6 @@ switch ($_GET['do']){
                     array_shift($ans);
                 }
                 if (count($ans) > 1){
-                    print_r($ans);
                     for ($j = 0;$j <= count($ans)-1;$j++){
                         if($ans[$j] === "true"){
                             $b = mysqli_query($link,"SELECT * FROM questions WHERE id = ".$resultrow['questionsid']);
@@ -229,7 +228,6 @@ switch ($_GET['do']){
                 if ($oldid == $resultrow['resultid']){
                     array_push($answer,implode(" ",$ans));
                 }else{
-                    print_r($resultrow['ans']);
                     if ($i != 0){
                         array_push($allans,$answer);
                         $answer = array();
@@ -245,6 +243,7 @@ switch ($_GET['do']){
             }
             fwrite($fp,"[填答結束]");
             fclose($fp);
+            echo true;
         break;
     case "inputquestion":
         break;
