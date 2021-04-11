@@ -26,7 +26,7 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
     }else{
         $questionsdatarow['required'] = false;
     }
-    $adata = array("id" => $questionsdatarow['id'],"desc" => $questionsdatarow['description'],"item" => $questionsdatarow['item'],"mode" => $questionsdatarow['mode'],"required" => $questionsdatarow['required'],"options" => $options,"ans" => array(),"else" => "");
+    $adata = array("id" => $questionsdatarow['id'],"desc" => $questionsdatarow['description'],"item" => $questionsdatarow['item'],"mode" => $questionsdatarow['mode'],"required" => $questionsdatarow['required'],"options" => $options,"ans" => array_pad(array(), 7, ""),"else" => "");
     array_push($data,$adata);
 }
 ?>

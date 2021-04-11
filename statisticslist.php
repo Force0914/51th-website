@@ -88,7 +88,7 @@
         },
         methods:{
             statisticsquestion(questionid){
-
+                location.href = `statistics.php?id=${questionid}`
             },
             outputquestion(name,questionid){
                 $.post(`api.php?do=outputquestion`,{name,questionid},function (a){

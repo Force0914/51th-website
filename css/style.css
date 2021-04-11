@@ -240,6 +240,10 @@ input.ios:checked:after {
     margin: 0 !important;
 }
 
+.allnone {
+    display: none;
+}
+
 @media (max-width: 412px) {
     .well * {
         font-size: 17px;
