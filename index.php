@@ -47,7 +47,6 @@
                             alert("登入成功");
                             location.href = "admin.php";
                         }else if (a == "run"){
-                            alert("成功辨識問卷");
                             location.href = `write.php?code=${_this.invitecode}`;
                         }else {
                             alert(a);
