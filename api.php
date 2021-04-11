@@ -173,8 +173,18 @@ switch ($_GET['do']){
         }
         break;
     case "searchinvitecode":
-        mysqli_query($link,"");
-        echo "查無此邀請碼資料";
+        $result = mysqli_query($link,"SELECT * FROM code WHERE code ='".$_POST['invitecode']."'");
+        if (mysqli_num_rows($result) > 0){
+            $row = mysqli_fetch_assoc($result);
+            $result2 = mysqli_query($link,"SELECT * FROM result WHERE questionid = ".$row['questionid']);
+            if (mysqli_num_rows($result2) > 0){
+                echo "true";
+            }else{
+                echo "目前尚無任何回答";
+            }
+        }else{
+            echo "查無此邀請碼資料";
+        }
         break;
     case "outputquestion":
         $questionid = $_POST['questionid'];
@@ -226,13 +236,13 @@ switch ($_GET['do']){
                     array_push($ans,"未填答");
                 }
                 if ($oldid == $resultrow['resultid']){
-                    array_push($answer,implode(" ",$ans));
+                    array_push($answer,implode(" ",array_filter($ans)));
                 }else{
                     if ($i != 0){
                         array_push($allans,$answer);
                         $answer = array();
                     }
-                    $answer[0] = implode(" ",json_decode($resultrow['ans']));
+                    $answer[0] = implode(" ",array_filter(json_decode($resultrow['ans'])));
                     $i++;
                 }
                 $oldid = $resultrow['resultid'];

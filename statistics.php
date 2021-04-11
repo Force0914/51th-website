@@ -43,18 +43,19 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
             $i = 0;
             $options = json_decode($questionsdatarow['options']);
             $row = json_decode($answerrow['ans']);
+            $options[0] = "其他";
             foreach($row as $key => $value){
                 if($value == "true"){
-                    if ($key+1 < 7){
-                        if (!isset($anstimerow[$i]['name'])) $anstimerow[$i]['name'] = $options[$key+1];
-                        if ($anstimerow[$i]['name'] != $options[$key]) $anstimerow[$i]['name'] = $options[$key+1];
-                    }else{
-                        $anstimerow[$i]['name'] = "其他";
-                    }
+                    if (!isset($anstimerow[$i]['name'])) $anstimerow[$i]['name'] = $options[$key];
+                    if ($anstimerow[$i]['name'] != $options[$key]) $anstimerow[$i]['name'] = $options[$key];
                     if (!isset($anstimerow[$i]['y'])) $anstimerow[$i]['y'] = 0;
                     $anstimerow[$i]['y'] += 1 ;
-                    $i++;
+                }else{
+                    $anstimerow[$i]['name'] = $options[$key];
+                    if (!isset($anstimerow[$i]['y'])) $anstimerow[$i]['y'] = 0;
+                    $anstimerow[$i]['y'] += 0;
                 }
+                $i++;
             }
         }
     }

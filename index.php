@@ -30,7 +30,7 @@
         el:'#app',
         data(){
             return{
-                admin: false,
+                admin: true,
                 account: null,
                 password: null,
                 invitecode: null

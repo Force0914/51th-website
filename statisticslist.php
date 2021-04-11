@@ -102,11 +102,10 @@
             },
             search(invitecode){
                 $.post(`api.php?do=searchinvitecode`,{invitecode},function (a){
-                    if (a == "查無此邀請碼資料"){
-                        alert(a)
+                    if (a == "true"){
+                        location.href = `search.php?code=${invitecode}`;
                     }else{
-                        a.splice(",")
-                        location.href = ""
+                        alert(a);
                     }
                 })
             },
