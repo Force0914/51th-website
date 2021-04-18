@@ -32,7 +32,7 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
             $options['true'] = "其他";
             foreach($row as $key => $value){
                 $i = 0;
-                if($value != ""){
+                if($value != "" && $value != "false"){
                     if (isset($anstimerow[$i]['name']) && $anstimerow[$i]['name'] != $options[$value]) $i++;
                     $anstimerow[$i]['name'] = $options[$value];
                     if (!isset($anstimerow[$i]['y'])) $anstimerow[$i]['y'] = 0;
@@ -124,7 +124,6 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
             }
         },
         mounted(){
-            console.log(this.allans)
             const _this = this
             for (i = 0;i < this.questions.length;i++){
                 if (this.questions[i].mode != 4){
@@ -141,11 +140,6 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                             tooltip: {
                                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                             },
-                            accessibility: {
-                                point: {
-                                    valueSuffix: '%'
-                                }
-                            },
                             plotOptions: {
                                 pie: {
                                     allowPointSelect: true,
@@ -160,8 +154,8 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                                 name: '百分比',
                                 colorByPoint: true,
                                 data: [{
-                                    name: 'Chrome',
-                                    y: 100
+                                    name: 'haha',
+                                    y: 100.0,
                                 }]
                             }]
                         });
@@ -169,39 +163,44 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                             piechart.series[0].setData(this.allans[i]);
                         }
                         let barchart = Highcharts.chart(`bar${i}`, {
-                        chart: {
-                            type: 'bar'
-                        },
-                        title: {
-                            text: this.questions[i].desc
-                        },
-                        tooltip: {
-                            pointFormat: '{series.name}: <b>{point.y:.1f}%</b>',
-                            shared: true
-                        },
-                        xAxis: {
-                            categories: ['選項1', '選項2', '選項3', '選項4', '選項5', '選項6', '其他']
-                        },
-                        yAxis: {
-                            min: 0,
-                            max: 100,
+                            chart: {
+                                type: 'bar'
+                            },
                             title: {
-                                text: ''
-                            }
-                        },
-                        legend: {
-                            reversed: true
-                        },
-                        plotOptions: {
-                            column: {
-                                stacking: 'percent'
-                            }
-                        },
-                        series: [{
-                            name: '選項',
-                            data: [2, 1]
-                        }]
-                    });
+                                text: this.questions[i].desc
+                            },
+                            xAxis: {
+                                categories: ['Test'],
+                                title: {
+                                    text: null
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                max: 100,
+                                title: {
+                                    text: '百分比 (%)',
+                                    align: 'high'
+                                }
+                            },
+                            tooltip: {
+                                valueSuffix: ' %'
+                            },
+                            plotOptions: {
+                                bar: {
+                                    dataLabels: {
+                                        enabled: true
+                                    }
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            series: [{
+                                name: '選項',
+                                data: [0]
+                            }]
+                        });
                     if (this.questions[i].mode != 4){
                         let categories = [];
                         let categoriesnum = [];

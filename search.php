@@ -28,6 +28,8 @@ while ($resultdatarow = mysqli_fetch_assoc($resultdata)){
         }else{
             $questionsdatarow['6'] = false;
         }
+        $ansdatarow['ans'] = str_replace("true",true,$ansdatarow['ans']);
+        $ansdatarow['ans'] = str_replace("false",false,$ansdatarow['ans']);
         $adata = array("id" => $questionsdatarow['0'],"desc" => $questionsdatarow['2'],"item" => $questionsdatarow['4'],"mode" => $questionsdatarow['3'],"required" => $questionsdatarow['6'],"options" => $options,"ans" => json_decode($ansdatarow['ans']),"else" => $ansdatarow['elseans']);
         array_push($data,$adata);
     }
@@ -57,7 +59,7 @@ while ($resultdatarow = mysqli_fetch_assoc($resultdata)){
     </div>
     <div>
         <div class="well" v-for="(question, index) in allquestions[page-1]">
-            <div class="well-color-top3" style="margin: 0"><span style="color: red;">{{question.required ?　'*' : '&nbsp;'}}</span>{{index + 1}}<p style="float: right;font-size: 15px;margin-right: 10px;color: green;">{{ types[question.mode] }}</p></div>
+            <div class="well-color-top3" style="margin: 0"><span style="color: red;">{{question.required ?　'*' : '&nbsp;'}}</span>{{Number(question.item) + 1}}<p style="float: right;font-size: 15px;margin-right: 10px;color: green;">{{ types[question.mode] }}</p></div>
             <div style="margin-top: 30px">
                 <p>題目說明：{{ question.desc }}</p><br><br>
                 <p>題目選項：</p><br>
@@ -65,10 +67,10 @@ while ($resultdatarow = mysqli_fetch_assoc($resultdata)){
                     <label v-if="question.mode == 1"><input type="radio" value="是" v-model="question.ans[0]" disabled>是</label>
                     <label v-if="question.mode == 1"><input type="radio" value="否" v-model="question.ans[0]" disabled>否</label>
                     <div class="row" v-if="question.mode == 2">
-                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data != ''"><input type="radio" :value="n" v-model="question.ans[0]" disabled>{{ question.options[n] }}</label>
+                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data.replace(/\s/g,'') != ''"><input type="radio" :value="n" v-model="question.ans[0]" disabled>{{ question.options[n] }}</label>
                     </div>
                     <div class="row" v-if="question.mode == 3">
-                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data != ''"><input type="checkbox" v-model="question.ans[n]" disabled>{{ question.options[n] }}</label>
+                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data.replace(/\s/g,'') != ''"><input type="checkbox" v-model="question.ans[n]" disabled>{{ question.options[n] }}</label>
                     </div>
                     <div class="row">
                         <label class="span5" v-if="question.options[0]"><input v-model="question.ans[0]" value="true" :type="question.mode == 2 ? 'radio' : 'checkbox'" disabled>其他：<input style="margin: 0" type="text" v-model="question.else" disabled></label>

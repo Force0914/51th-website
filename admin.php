@@ -47,7 +47,7 @@
                                     <td>$i</td>
                                     <td>$name</td>
                                     <td>
-                                        <a class='btn btn-primary' @click='editquestion($id)'>修改</a>
+                                        <a class='btn btn-primary' :disabled='this.lock[$id]' @click='editquestion($id)'>修改</a>
                                     </td>
                                     <td>
                                         <input type='checkbox' class='ios' id='checkbox-1' v-model='lock[$id]' @click='lockquestion($id)'>
@@ -60,9 +60,9 @@
                 }
             ?>
     </table>
-    <div id="modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="modal" class="modal hide fade">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button type="button" class="close" data-dismiss="modal">×</button>
             <h3 id="myModalLabel">新增問卷</h3>
         </div>
         <form action="question.php" method="POST" @submit.prevent="submit()">
@@ -71,7 +71,7 @@
                 <label>　題數：<input type="number" name="num" min="1" v-model="num" required></label><br><br>
                 <label v-if="invitecodemod == 1">問卷所需數量：<input type="number" name="questionnum" min="0" v-model.number="questionnum" required>　( 數字填 0 即為無限 )</label>
                 <label v-if="invitecodemod == 2">問卷所需數量：<input type="number" name="questionnum" min="1" v-model.number="questionnum" required>　( 最小值為 1 )</label><br><br>
-                <label>邀請碼：　</label>
+                <p>邀請碼：　</p>
                 <label><input type="radio" value="1" name="invitecodemod" v-model="invitecodemod">共用邀請碼</label>
                 <label><input type="radio" value="2" name="invitecodemod" v-model="invitecodemod">獨立邀請碼</label><br><br>
                 <div>
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <input type="button" class="btn" data-dismiss="modal" aria-hidden="true" value="取消">
+                <input type="button" class="btn" data-dismiss="modal" value="取消">
                 <input type="submit" class="btn btn-primary" value="確定">
             </div>
         </form>
@@ -102,14 +102,6 @@
         methods:{
             statistics(){
                 location.href = "statisticslist.php";
-            },
-            happy(i){
-                let haha = this.invitecode.filter(fuck => fuck == this.invitecode[i])
-                if (haha.length > 1){
-                    this.invitecode[i] = null
-                    this.$forceUpdate()
-                    alert("偵測到重覆邀請碼")
-                }
             },
             submit(){
                 const _this = this
@@ -134,11 +126,8 @@
                 },function (a){})
             },
             editquestion(questionid){
-                if (this.lock[questionid]){
-                    alert("此問卷已被鎖定!");
-                }else{
+                if (!this.lock[questionid])
                     location.href = `editquestion.php?id=${questionid}`;
-                }
             },
             showModal(modalid){
                 $(`#${modalid}`).modal('show')

@@ -23,7 +23,7 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
     }else{
         $questionsdatarow['required'] = false;
     }
-    $adata = array("id" => $questionsdatarow['id'],"desc" => $questionsdatarow['description'],"item" => $questionsdatarow['item'],"mode" => $questionsdatarow['mode'],"required" => $questionsdatarow['required'],"options" => $options,"ans" => array_pad(array(), 7, ""),"else" => "");
+    $adata = array("id" => $questionsdatarow['id'],"desc" => $questionsdatarow['description'],"item" => $questionsdatarow['item'],"mode" => $questionsdatarow['mode'],"required" => $questionsdatarow['required'],"options" => $options,"ans" => array_pad(array(), 7, false),"else" => "");
     array_push($data,$adata);
 }
 ?>
@@ -51,7 +51,7 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
     </div>
     <div>
         <div :class="{well:true,active:index == mpage}" v-for="(question, index) in fuck" :key="question.id">
-            <div class="well-color-top3" style="margin: 0"><span style="color: red;">{{question.required ?　'*' : '&nbsp;'}}</span>{{index + 1}}<p style="float: right;font-size: 15px;margin-right: 10px;color: green;">{{ types[question.mode] }}</p></div>
+            <div class="well-color-top3" style="margin: 0"><span style="color: red;">{{question.required ?　'*' : '&nbsp;'}}</span>{{Number(question.item) + 1}}<p style="float: right;font-size: 15px;margin-right: 10px;color: green;">{{ types[question.mode] }}</p></div>
             <div style="margin-top: 30px">
                 <p>題目說明：{{ question.desc }}</p><br><br>
                 <p>題目選項：</p><br>
@@ -59,10 +59,10 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
                     <label v-if="question.mode == 1"><input type="radio" value="是" v-model="question.ans[0]">是</label>
                     <label v-if="question.mode == 1"><input type="radio" value="否" v-model="question.ans[0]">否</label>
                     <div class="row" v-if="question.mode == 2">
-                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data != ''"><input type="radio" :value="n" v-model="question.ans[0]">{{ question.options[n] }}</label>
+                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data.replace(/\s/g,'') != ''"><input type="radio" :value="n" v-model="question.ans[0]">{{ question.options[n] }}</label>
                     </div>
                     <div class="row" v-if="question.mode == 3">
-                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data != ''"><input type="checkbox" v-model="question.ans[n]">{{ question.options[n] }}</label>
+                        <label class="span5" v-for="(data,n) in question.options" v-if="n > 0 && data.replace(/\s/g,'') != ''"><input type="checkbox" v-model="question.ans[n]">{{ question.options[n] }}</label>
                     </div>
                     <div class="row">
                         <label class="span5" v-if="question.options[0]"><input v-model="question.ans[0]" value="true" :type="question.mode == 2 ? 'radio' : 'checkbox'">其他：<input style="margin: 0" type="text" v-model="question.else" :disabled="question.ans[0] !== true && question.ans[0] !== 'true'"></label>
@@ -90,7 +90,7 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
     </div>
 </div>
 <script>
-    new Vue({
+    let vue = new Vue({
         el: "#app",
         data(){
             return {
@@ -156,6 +156,11 @@ while ($questionsdatarow = mysqli_fetch_assoc($questionsdata)){
             const _this  = this
             window.onresize = function () {
                 _this.innerWidth = $(window).width()
+            }
+            for (let i=0;i<=_this.questions.length - 1;i++){
+                if(_this.questions[i].mode == 4){
+                    _this.questions[i].ans[0] = ""
+                }
             }
         }
     })

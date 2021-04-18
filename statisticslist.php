@@ -12,7 +12,8 @@
     <h1>手機問卷管理系統 - 問卷統計</h1>
     <div class="btn-group">
         <input type="button" class="btn" value="返回" @click="admin()">
-        <input type="button" class="btn" value="問卷輸入" @click="inputquestion()">
+<!--        <label class="btn" style="float: right"><form style="display: none" action="api.php?do=inputquestion" method="POST"><input type="file" accept=".csv"></form>問卷輸入</label>-->
+        <label class="btn" style="float: right"><input id="files" type="file" accept=".csv" style="display: none" @change="inputquestion($event)">問卷輸入</label>
     </div><br><br>
     <div class="btn-group">
         <input list="list" @keypress.enter="search(invitecode)" v-model="invitecode" placeholder="以邀請碼查詢填答內容">
@@ -34,6 +35,8 @@
         $link = mysqli_connect("127.0.0.1","admin","1234","51");
         $result = mysqli_query($link,"SELECT * FROM question");
         $lock = array();
+        $crow = array();
+        $countarray = array("");
         if (mysqli_num_rows($result) >=1){
             ?>
             <tbody>
@@ -48,6 +51,7 @@
                 $aresult = mysqli_query($link,"SELECT COUNT(*) FROM result WHERE questionid = $id");
                 $count = mysqli_fetch_assoc($aresult);
                 $count = $count['COUNT(*)'];
+                array_push($countarray,intval($count));
                 echo "<tr>
                                     <td>$i</td>
                                     <td>$name</td>
@@ -56,7 +60,7 @@
                                         <div class='btn-group'>
                                             <a class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>動作 <span class='caret'></span></a>
                                             <ul class='dropdown-menu'>
-                                                <li><a @click='statisticsquestion($id)'>統計結果</a></li>
+                                                <li><a @click='statisticsquestion($i,$id)'>統計結果</a></li>
                                                 <li class='divider'></li>
                                                 <li><a @click='copyquestion($id)'>複製</a></li>
                                                 <li class='divider'></li>
@@ -83,12 +87,18 @@
                 title: null,
                 num: null,
                 invitecoderow: <?=json_encode($crow)?>,
-                invitecode: null
+                invitecode: null,
+                countarray: <?=json_encode($countarray)?>,
             }
         },
         methods:{
-            statisticsquestion(questionid){
-                location.href = `statistics.php?id=${questionid}`
+            statisticsquestion(i,questionid){
+                console.log(i)
+                if (this.countarray[i] > 0){
+                    location.href = `statistics.php?id=${questionid}`
+                }else{
+                    alert("目前尚無任何回答")
+                }
             },
             outputquestion(name,questionid){
                 $.post(`api.php?do=outputquestion`,{name,questionid},function (a){
@@ -97,8 +107,19 @@
                     }
                 })
             },
-            inputquestion(questionid){
-                $.post(`api.php?do=inputquestion`,{questionid},function (a){})
+            inputquestion(event){
+                const formdata = new FormData()
+                formdata.append('file', event.target.files[0])
+                $.ajax({
+                    url: 'api.php?do=inputquestion',
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formdata
+                }).then(a => {
+                    alert(a)
+                    history.go(0)
+                })
             },
             search(invitecode){
                 $.post(`api.php?do=searchinvitecode`,{invitecode},function (a){
@@ -119,10 +140,7 @@
                 location.href = "admin.php";
             },
             copyquestion(questionid){
-                let copyans = false
-                if (confirm("是否要連答案一起複製")){
-                    copyans = true
-                }
+                let copyans = confirm("是否要連答案一起複製")
                 $.post(`api.php?do=copyquestion`,{questionid,copyans},function (a){
                     alert("複製成功")
                     history.go(0)

@@ -53,7 +53,7 @@
         <div draggable="true" class="well" v-for="(question, index) in questions" @dragstart="dragStart($event, index)" @dragover="allowDrop" @drop="drop($event, index)" :key="question.item">
             <div class="well-color-left">{{index + 1}}</div>
             <label>問卷題型: </label>
-            <label v-for="(item, i) in types"><input type="radio" v-model="question.mode" :value="i">{{ item }}</label>
+            <label v-for="(item, i) in types" v-if="item != ''"><input type="radio" v-model="question.mode" :value="i">{{ item }}</label>
             <button type="button" class="close" @click="del(index)">×</button>
             <label style="margin-right: 20px;float: right;" v-if="question.mode != 0"><input type="checkbox" name="required" id="required" v-model="question.required">必填</label>
             <br v-if="question.mode != 0">
@@ -94,7 +94,7 @@
             },
             add(){
                 this.num++;
-                this.questions.push({id:null,item: this.num, mode: 0, desc: '',required: false, options: [false,'', '', '', '', '', '']})
+                this.questions.push({id:null,item: this.num, mode: 1, desc: '',required: false, options: [false,'', '', '', '', '', '']})
                 if(this.pcpage == 0){
                     this.pcpage = this.pcpage + 1
                 }

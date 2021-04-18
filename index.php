@@ -8,22 +8,20 @@
     <title>網路民意調查系統</title>
 </head>
 <body class="a">
-    <div class="box" id="app">
+    <div class="box well index active " style="padding: 22px" id="app">
+        <div class="well-color-top"></div>
         <h2 v-if="admin">後台問卷管理系統</h2>
         <h2 v-else>前台意見調查系統</h2>
         <hr>
-        <h3 v-if="admin">登入</h3>
-        <h3 v-else>您好!</h3>
             <input type="text" name="account" id="account" placeholder="帳號" v-model="account" v-if="admin" @keydown.enter="submit('login')">
             <br v-if="admin">
             <input type="password" name="password" id="password" placeholder="密碼" v-model="password" v-if="admin" @keydown.enter="submit('login')">
-            <input type="text" name="invitecode" id="invitecode" placeholder="請輸入填寫問卷邀請碼" v-model="invitecode" @keydown.enter="submit('run')" v-else>
+            <input style="margin:20px 0;width: 140px" type="text" name="invitecode" id="invitecode" placeholder="請輸入填寫問卷邀請碼" v-model="invitecode" @keydown.enter="submit('run')" v-else>
             <hr>
             <input type="submit" class="btn" value="登入" @click="submit('login')" v-if="admin">
-            <input type="submit" class="btn" value="繼續" @click="submit('run')" v-else>
-        <hr>
-        <a @click="aclick" v-if="admin">使用者介面</a>
-        <a @click="aclick" v-else>管理者介面</a>
+            <input type="submit" class="btn" value="繼續" @click="submit('run')" v-else><br><br>
+        <a @click="aclick" v-if="admin">問卷調查</a>
+        <a @click="aclick" v-else>後台管理</a>
     </div>
 <script>
     new Vue({

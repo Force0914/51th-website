@@ -1,7 +1,8 @@
 * {
     margin: 0;
-    user-select: none;
+    user-select: none !important;
     outline: none !important;
+    font-family: 微軟正黑體 !important;
 }
 
 body {
@@ -70,12 +71,10 @@ body.a {
 }
 
 .box {
-    border-radius: 9%;
+    border-radius: 10px;
     text-align: center;
-    border: 1px solid rgb(0, 0, 0,0.7);
     padding: 30px;
-    border-radius: 15px;
-    background: rgba(0,0,0,0.05);
+    background: white;
 }
 
 .txt-center {
@@ -98,6 +97,7 @@ body.a {
 }
 
 .Top-well {
+    height: 90px;
     margin-top: 12px;
     background: #fff;
     border: 1px solid #dadce0;
@@ -132,7 +132,7 @@ body.a {
 .well-color-top3 {
     background: rgba(0,0,0,0.1);
     line-height: 30px;
-    font-size: 25px;
+    font-size: 20px;
     padding-left: 10px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -145,7 +145,7 @@ body.a {
 
 .well-color-left {
     margin-right: 10px;
-    font-size: 25px;
+    font-size: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -166,32 +166,6 @@ body.a {
 
 .chose {
     margin-left: 48px;
-}
-
-.btn-primary {
-    background: rgba(10,132,255);
-}
-
-.btn-danger {
-    background: rgba(255,69,48);
-}
-
-.btn-warning {
-    background: rgba(255,159,10);
-}
-
-::-webkit-scrollbar {
-    width: 12px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgb(209,209,214);
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    border: 3px rgb(209,209,214) solid;
 }
 
 input.ios {
@@ -268,6 +242,15 @@ input.ios:checked:after {
 
     .progress {
         height: 10px;
+    }
+
+    .Top-well{
+        height: auto;
+    }
+
+    .index{
+        width: 300px !important;
+        height: auto !important;
     }
 }
 
