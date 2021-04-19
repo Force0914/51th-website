@@ -35,8 +35,10 @@
         $link = mysqli_connect("127.0.0.1","admin","1234","51");
         $result = mysqli_query($link,"SELECT * FROM question");
         $lock = array();
-        $crow = array();
+        $cresult = mysqli_query($link,"SELECT * FROM code");
+        $crow = mysqli_fetch_all($cresult);
         $countarray = array("");
+        $resultarray = array("");
         if (mysqli_num_rows($result) >=1){
             ?>
             <tbody>
@@ -46,12 +48,11 @@
                 $i++;
                 $id = $row['id'];
                 $name = $row['name'];
-                $cresult = mysqli_query($link,"SELECT * FROM code");
-                $crow = mysqli_fetch_all($cresult);
-                $aresult = mysqli_query($link,"SELECT COUNT(*) FROM result WHERE questionid = $id");
-                $count = mysqli_fetch_assoc($aresult);
-                $count = $count['COUNT(*)'];
+                $aresult = mysqli_query($link,"SELECT * FROM result WHERE questionid = $id");
+                $resultrow = mysqli_fetch_all($aresult);
+                $count = mysqli_num_rows($aresult);
                 array_push($countarray,intval($count));
+                array_push($resultarray,$resultrow);
                 echo "<tr>
                                     <td>$i</td>
                                     <td>$name</td>
@@ -62,11 +63,24 @@
                                             <ul class='dropdown-menu'>
                                                 <li><a @click='statisticsquestion($i,$id)'>統計結果</a></li>
                                                 <li class='divider'></li>
+                                                <li><a @click='lookanswer($i,$id)'>查看作答結果</a></li>
+                                                <li class='divider'></li>
                                                 <li><a @click='copyquestion($id)'>複製</a></li>
                                                 <li class='divider'></li>
                                                 <li><a @click='deletequestion($id)'>刪除</a></li>
                                                 <li class='divider'></li>
                                                 <li><a @click='outputquestion(`$name`,$id)'>問卷輸出</a></li>
+                                                <li class='divider'></li>
+                                                <li class='dropdown-submenu'>
+                                                <a v-if='result[$i] != ``' >刪除單一填答內容</a>
+                                                    <ul class='dropdown-menu'>
+                                                            <li class='divider'></li>
+                                                        <div v-for='(value,key) in result[$i]'>
+                                                            <li><a @click='delans(value)'>第 {{ key + 1 }} 個</a></li>
+                                                            <li class='divider'></li>
+                                                        </div>
+                                                    </ul>
+                                                </li>
                                             </ul>
                                         </div>
                                     </td>
@@ -89,11 +103,25 @@
                 invitecoderow: <?=json_encode($crow)?>,
                 invitecode: null,
                 countarray: <?=json_encode($countarray)?>,
+                result: <?=json_encode($resultarray)?>
             }
         },
         methods:{
+            delans(result){
+                let resultid = result[0]
+                $.post(`api.php?do=deleteanswer`,{resultid},function (a){
+                    alert(a);
+                    history.go(0)
+                })
+            },
+            lookanswer(i,questionid){
+                if (this.countarray[i] > 0){
+                    location.href = `search2.php?id=${questionid}`
+                }else{
+                    alert("目前尚無任何回答")
+                }
+            },
             statisticsquestion(i,questionid){
-                console.log(i)
                 if (this.countarray[i] > 0){
                     location.href = `statistics.php?id=${questionid}`
                 }else{

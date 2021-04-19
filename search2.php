@@ -1,39 +1,39 @@
 <?php
-$invitecode = $_GET['code'];
+$searchid = $_GET['id'];
 $link = mysqli_connect("127.0.0.1","admin","1234","51");
-$result = mysqli_query($link,"SELECT * FROM code WHERE code = '$invitecode'");
-$row = mysqli_fetch_assoc($result);
-$questionid = $row['questionid'];
-$questiondata = mysqli_query($link,"SELECT * FROM question WHERE id = $questionid");
+$result = mysqli_query($link,"SELECT * FROM code WHERE questionid = $searchid");
+$questiondata = mysqli_query($link,"SELECT * FROM question WHERE id = $searchid ");
 $questiondatarow = mysqli_fetch_assoc($questiondata);
-$questionsdata = mysqli_query($link,"SELECT * FROM questions WHERE questionid = $questionid ORDER BY item");
-$resultdata = mysqli_query($link,"SELECT * FROM result WHERE questionid = $questionid");
 $title = $questiondatarow['name'];
-$page = mysqli_num_rows($resultdata);
 $questions = array();
-$questionsdatarowarray = mysqli_fetch_all($questionsdata);
-while ($resultdatarow = mysqli_fetch_assoc($resultdata)){
-    $data = array();
-    foreach ($questionsdatarowarray as $questionsdatarow){
-        $ansdata = mysqli_query($link,"SELECT * FROM answer WHERE resultid = ".$resultdatarow['id']." AND questionsid = ".$questionsdatarow['0']);
-        $ansdatarow = mysqli_fetch_assoc($ansdata);
-        $options = json_decode($questionsdatarow['5']);
-        if ($options[0] == "true"){
-            $options[0] = true;
-        }else{
-            $options[0] = false;
+while($row = mysqli_fetch_assoc($result)){
+    $questionsdata = mysqli_query($link,"SELECT * FROM questions WHERE questionid = $searchid ORDER BY item");
+    $resultdata = mysqli_query($link,"SELECT * FROM result WHERE questionid = $searchid");
+    $page = mysqli_num_rows($resultdata);
+    $questionsdatarowarray = mysqli_fetch_all($questionsdata);
+    while ($resultdatarow = mysqli_fetch_assoc($resultdata)){
+        $data = array();
+        foreach ($questionsdatarowarray as $questionsdatarow){
+            $ansdata = mysqli_query($link,"SELECT * FROM answer WHERE resultid = ".$resultdatarow['id']." AND questionsid = ".$questionsdatarow['0']);
+            $ansdatarow = mysqli_fetch_assoc($ansdata);
+            $options = json_decode($questionsdatarow['5']);
+            if ($options[0] == "true"){
+                $options[0] = true;
+            }else{
+                $options[0] = false;
+            }
+            if ($questionsdatarow['6'] == "true"){
+                $questionsdatarow['6'] = true;
+            }else{
+                $questionsdatarow['6'] = false;
+            }
+            $ansdatarow['ans'] = str_replace("true",true,$ansdatarow['ans']);
+            $ansdatarow['ans'] = str_replace("false",false,$ansdatarow['ans']);
+            $adata = array("id" => $questionsdatarow['0'],"desc" => $questionsdatarow['2'],"item" => $questionsdatarow['4'],"mode" => $questionsdatarow['3'],"required" => $questionsdatarow['6'],"options" => $options,"ans" => json_decode($ansdatarow['ans']),"else" => $ansdatarow['elseans']);
+            array_push($data,$adata);
         }
-        if ($questionsdatarow['6'] == "true"){
-            $questionsdatarow['6'] = true;
-        }else{
-            $questionsdatarow['6'] = false;
-        }
-        $ansdatarow['ans'] = str_replace("true",true,$ansdatarow['ans']);
-        $ansdatarow['ans'] = str_replace("false",false,$ansdatarow['ans']);
-        $adata = array("id" => $questionsdatarow['0'],"desc" => $questionsdatarow['2'],"item" => $questionsdatarow['4'],"mode" => $questionsdatarow['3'],"required" => $questionsdatarow['6'],"options" => $options,"ans" => json_decode($ansdatarow['ans']),"else" => $ansdatarow['elseans']);
-        array_push($data,$adata);
+        array_push($questions,$data);
     }
-    array_push($questions,$data);
 }
 ?>
 <!doctype html>
@@ -82,12 +82,11 @@ while ($resultdatarow = mysqli_fetch_assoc($resultdata)){
     </div>
 </div>
 <script>
-    new Vue({
+    let vue = new Vue({
         el: "#app",
         data(){
             return {
-                questionid: <?=$questionid?>,
-                invitecode: "<?=$_GET['code']?>",
+                questionid: <?=$searchid?>,
                 title: "<?=$title?>",
                 page: 1,
                 allquestions: <?=json_encode($questions)?>
@@ -102,21 +101,6 @@ while ($resultdatarow = mysqli_fetch_assoc($resultdata)){
                     this.page = this.allquestions.length
                 }else if(this.page < 1){
                     this.page = 1
-                }
-            }
-        },
-        mounted(){
-            const _this  = this
-            for (let i=0;i<_this.allquestions.length;i++){
-                for (let j=0;j<_this.allquestions[i].length;j++){
-                    if(_this.allquestions[i][j].mode == 2){
-                        if (_this.allquestions[i][j].ans[0] != "else"){
-                            _this.allquestions[i][j].else = "";
-                        }
-                    }
-                    // else if (_this.allquestions[j][i].mode == 3){
-                    //     if (){}
-                    // }
                 }
             }
         }

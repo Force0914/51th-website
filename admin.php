@@ -10,6 +10,7 @@
 <body class="txt-center">
 <div id="app" class="container">
     <h1>手機問卷管理系統</h1>
+    <a class="btn" style="position: absolute;top: 15px;right: 20px;" @click="logout()">登出</a>
     <div class="btn-group">
         <input type="button" class="btn" value="新增問卷" @click="showModal('modal')">
         <input type="button" class="btn" value="問卷統計" @click="statistics()">
@@ -100,6 +101,10 @@
             }
         },
         methods:{
+            logout(){
+                alert("登出成功");
+                location.href = "index.php";
+            },
             statistics(){
                 location.href = "statisticslist.php";
             },

@@ -211,6 +211,7 @@ switch ($_GET['do']){
         $questionresult = query("SELECT * FROM question WHERE id = $questionid");
         $questionrow = mysqli_fetch_assoc($questionresult);
         $questionsresult = query("SELECT * FROM questions WHERE questionid = $questionid ORDER BY item");
+        $questionscount = mysqli_num_rows($questionsresult);
         $result = query("SELECT * FROM result WHERE questionid = $questionid");
         $resultresult = query("SELECT * FROM result,answer,questions WHERE result.id = answer.resultid AND answer.questionsid = questions.id AND result.questionid = $questionid");
         $filename = $_POST['name'];
@@ -235,6 +236,7 @@ switch ($_GET['do']){
             $allans = array();
             $i = 0;
             $resultallrow = mysqli_fetch_all($result);
+            $ansrow = array();
             while ($resultrow = mysqli_fetch_assoc($resultresult)) {
                 $ansdata = array();
                 $ans = json_decode($resultrow['ans']);
@@ -246,9 +248,14 @@ switch ($_GET['do']){
                     $j++;
                     array_push($ansdata,str_replace(" ","&nbsp;",$value));
                 }
-                array_push($allans,implode(" ",$ansdata));
+                array_push($ansrow,implode(" ",$ansdata));
+                if (COUNT($ansrow) == $questionscount){
+                    array_push($allans,implode(",",$ansrow));
+                    $ansrow = array();
+                }
             }
-            if (isset($allans[0])) fwrite($fp,implode(",",$allans)."\n");
+            if ($ansrow != array()) array_push($allans,implode(",",$ansrow));
+            if (isset($allans[0])) fwrite($fp,implode("\n",$allans)."\n");
             fwrite($fp,"[填答結束]");
             fclose($fp);
             echo true;
@@ -308,7 +315,6 @@ switch ($_GET['do']){
                         $resultid = mysqli_insert_id($link);
                      }
                      if ($value != "[問卷結束]" && $value != "[填答]" && $value != "[填答結束]"){
-                         $value = $value;
                          $answer = explode(",",$value);
                          foreach ($answer as $anskey => $ans){
                              $ans = str_replace("&nbsp;"," ",explode(" ",$ans));
@@ -327,6 +333,10 @@ switch ($_GET['do']){
              fclose($fp);
              echo "問卷輸入成功";
         }
+        break;
+    case "deleteanswer":
+        query("DELETE FROM result WHERE id = ".$_POST['resultid']);
+        echo "刪除成功";
         break;
 }
 function query($query){

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.0
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2021-03-30 05:51:56
+-- 產生時間： 2021-04-20 01:57:37
 -- 伺服器版本： 10.4.18-MariaDB
--- PHP 版本： 8.0.3
+-- PHP 版本： 8.0.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,11 +40,10 @@ CREATE TABLE `answer` (
 --
 
 INSERT INTO `answer` (`id`, `resultid`, `questionsid`, `ans`, `elseans`) VALUES
-(37, 13, 124, '[\"是\"]', NULL),
-(38, 14, 120, '未填答', NULL),
-(39, 14, 121, '[\"6\"]', ''),
-(40, 14, 122, '[\"true\"]', 'NULL'),
-(41, 14, 123, '[\"A\"]', NULL);
+(956, 107, 446, '[\"否\",\"false\",\"false\",\"false\",\"false\",\"false\",\"false\"]', NULL),
+(957, 107, 447, '[\"true\",\"false\",\"false\",\"false\",\"false\",\"false\",\"false\"]', 'asdasdasd'),
+(958, 107, 448, '[\"false\",\"true\",\"false\",\"false\",\"false\",\"false\",\"false\"]', 'asdasd'),
+(959, 107, 449, '[\"adasd\",\"false\",\"false\",\"false\",\"false\",\"false\",\"false\"]', NULL);
 
 -- --------------------------------------------------------
 
@@ -64,16 +63,9 @@ CREATE TABLE `code` (
 --
 
 INSERT INTO `code` (`id`, `questionid`, `code`, `cishu`) VALUES
-(13, 63, '1234567890', 0),
-(14, 64, '1', -1),
-(15, 64, '2', -1),
-(16, 64, '3', 1),
-(17, 64, '4', 1),
-(18, 64, '5', 1),
-(19, 64, '6', 1),
-(20, 64, '7', 1),
-(21, 64, '8', 1),
-(22, 64, '9', 1);
+(222, 161, '1611618543265', 0),
+(225, 164, '1641618543346', 0),
+(226, 165, '1651618543350', 0);
 
 -- --------------------------------------------------------
 
@@ -94,8 +86,9 @@ CREATE TABLE `question` (
 --
 
 INSERT INTO `question` (`id`, `name`, `invitecodemod`, `pcpage`, `locked`) VALUES
-(63, '問卷範例123', 1, 2, 'false'),
-(64, '多邀請碼問卷', 2, 2, 'false');
+(161, '問卷範例123', 1, 1, 'false'),
+(164, '複製_問卷範例123(含答案)', 1, 1, 'false'),
+(165, '複製_問卷範例123(不含答案)', 1, 1, 'false');
 
 -- --------------------------------------------------------
 
@@ -118,11 +111,18 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `questionid`, `description`, `mode`, `item`, `options`, `required`) VALUES
-(120, 63, '是非題', 1, 0, '[\"false\",\"\",\"\",\"\",\"\",\"\",\"\"]', 'false'),
-(121, 63, '單選題', 2, 1, '[\"true\",\"單選題1\",\"單選題2\",\"單選題3\",\"單選題4\",\"單選題5\",\"單選題6\"]', 'true'),
-(122, 63, '多選題', 3, 2, '[\"true\",\"多選題1\",\"多選題2\",\"多選題3\",\"多選題4\",\"多選題5\",\"多選題6\"]', 'true'),
-(123, 63, '問答題', 4, 3, '[\"false\",\"\",\"\",\"\",\"\",\"\",\"\"]', 'true'),
-(124, 64, '哈哈', 1, 0, '[\"false\",\"\",\"\",\"\",\"\",\"\",\"\"]', 'true');
+(446, 161, '這是是非題', 1, 0, '[\"false\",\"\",\"\",\"\",\"\",\"\",\"\"]', 'false'),
+(447, 161, '這是單選題', 2, 1, '[\"true\",\"單選題1\",\"單選題2\",\"單選題3\",\"單選題4\",\"單選題5\",\"單選題6\"]', 'false'),
+(448, 161, '這是多選題', 3, 2, '[\"true\",\"多選題1\",\"多選題2\",\"多選題3\",\"多選題4\",\"多選題5\",\"多選題6\"]', 'false'),
+(449, 161, '這是問答題', 4, 3, '[\"false\",\"false\",\"false\",\"false\",\"false\",\"false\",\"false\"]', 'false'),
+(464, 164, '這是是非題', 1, 0, '[\"false\",\"\",\"\",\"\",\"\",\"\",\"\"]', 'false'),
+(465, 164, '這是單選題', 2, 1, '[\"true\",\"單選題1\",\"單選題2\",\"單選題3\",\"單選題4\",\"單選題5\",\"單選題6\"]', 'false'),
+(466, 164, '這是多選題', 3, 2, '[\"true\",\"多選題1\",\"多選題2\",\"多選題3\",\"多選題4\",\"多選題5\",\"多選題6\"]', 'false'),
+(467, 164, '這是問答題', 4, 3, '[\"false\",\"false\",\"false\",\"false\",\"false\",\"false\",\"false\"]', 'false'),
+(471, 165, '這是是非題', 1, 0, '[\"false\",\"\",\"\",\"\",\"\",\"\",\"\"]', 'false'),
+(472, 165, '這是單選題', 2, 1, '[\"true\",\"單選題1\",\"單選題2\",\"單選題3\",\"單選題4\",\"單選題5\",\"單選題6\"]', 'false'),
+(473, 165, '這是多選題', 3, 2, '[\"true\",\"多選題1\",\"多選題2\",\"多選題3\",\"多選題4\",\"多選題5\",\"多選題6\"]', 'false'),
+(474, 165, '這是問答題', 4, 3, '[\"false\",\"false\",\"false\",\"false\",\"false\",\"false\",\"false\"]', 'false');
 
 -- --------------------------------------------------------
 
@@ -132,16 +132,16 @@ INSERT INTO `questions` (`id`, `questionid`, `description`, `mode`, `item`, `opt
 
 CREATE TABLE `result` (
   `id` int(11) NOT NULL,
-  `questionid` int(11) NOT NULL
+  `questionid` int(11) NOT NULL,
+  `codeid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- 傾印資料表的資料 `result`
 --
 
-INSERT INTO `result` (`id`, `questionid`) VALUES
-(14, 63),
-(13, 64);
+INSERT INTO `result` (`id`, `questionid`, `codeid`) VALUES
+(107, 161, 222);
 
 -- --------------------------------------------------------
 
@@ -200,7 +200,8 @@ ALTER TABLE `questions`
 --
 ALTER TABLE `result`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `questionid` (`questionid`);
+  ADD KEY `questionid` (`questionid`),
+  ADD KEY `codeid` (`codeid`);
 
 --
 -- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
@@ -210,31 +211,31 @@ ALTER TABLE `result`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `answer`
 --
 ALTER TABLE `answer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=960;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `code`
 --
 ALTER TABLE `code`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=255;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `question`
 --
 ALTER TABLE `question`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=194;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=552;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `result`
 --
 ALTER TABLE `result`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- 已傾印資料表的限制式
